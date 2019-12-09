@@ -75,8 +75,9 @@ jQuery(document).ready(function ($) {
         $('form.cart').find('button[type=submit]').on('click',function(e){
             e.preventDefault();
             var $form = $(this).parents('form.cart').eq(0);
-            var id = $form.find('input[name="add-to-cart"]').attr('value');
-            var qty = $form.find('input[name="quantity"]').attr('value');
+            //var $form = $(this).parents('form.cart');
+            var id = $form.find('input[name="add-to-cart"]').val();
+            var qty = $form.find('input[name="quantity"]').val();
             //add to cart
             jQuery.post(
                 myajaxurl.url, 
@@ -86,6 +87,9 @@ jQuery(document).ready(function ($) {
                     'qty':qty,
                 }, 
                 function(response){
+                    /*console.log('Add Cart function');
+                    console.log(response);
+                    console.log('====================================');*/
                     if(Number($(response).find("cart").attr("id"))===1){
                         //update cart popup
                         jQuery.post(
@@ -95,7 +99,8 @@ jQuery(document).ready(function ($) {
                                 'data':'',
                             }, 
                             function(response){
-                                if($(response).find("response_data").length>0){
+                                //console.log(response);
+                                if($(response).find("response_data").length > 0){
                                     $text = $(response).find("response_data").eq(0).text();
                                     $('.popup-cart').html($text);
                             
@@ -127,6 +132,7 @@ jQuery(document).ready(function ($) {
                             function(response){
                                 if($(response).find("response_data").length>0){
                                     $text = $(response).find("response_data").eq(0).text();
+                                    //console.log($text);
                                     $.colorbox({
                                         width: '90%',
                                         maxWidth: '600px',

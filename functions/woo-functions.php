@@ -348,10 +348,11 @@ add_action('woocommerce_after_shop_loop_item' , 'my_popup_view');
 add_action( 'wp_ajax_add_cart', 'my_ajax_add_cart' );
 add_action( 'wp_ajax_nopriv_add_cart', 'my_ajax_add_cart' );
 function my_ajax_add_cart() {
-    if(isset($_POST['id'])&&isset($_POST['qty'])){
+    global $woocommerce;
+    if(isset($_POST['id']) && isset($_POST['qty'])){
         $id = intval( $_POST['id'] );
         $qty = intval ( $_POST['qty']);
-        if(WC()->cart->add_to_cart( $id , $qty)!==false){
+        if( $woocommerce->cart->add_to_cart( $id , $qty) != false){
             $status = 1;
         } else {
             $status = 0;
@@ -360,9 +361,9 @@ function my_ajax_add_cart() {
         $status = 0;
     }
     $response = array(
-        'what'=>'cart',
-        'action'=>'add_cart',
-        'id'=>$status,
+        'what'      => 'cart',
+        'action'    => 'add_cart',
+        'id'        => $status,
     );
     $xmlResponse = new WP_Ajax_Response($response);
     $xmlResponse->send();
@@ -426,10 +427,14 @@ function my_ajax_get_cart() {
 add_action( 'wp_ajax_get_checkout_popup', 'my_ajax_get_checkout_popup' );
 add_action( 'wp_ajax_nopriv_get_checkout_popup', 'my_ajax_get_checkout_popup' );
 function my_ajax_get_checkout_popup() {
+    global $woocommerce;  // added 12-9-19
     if(isset($_POST['id'])){
         $id = intval( $_POST['id'] );
         $return = '<div class="popup-checkout"><div class="top-bar"><div class="title">Item Added to Shopping Cart</div></div><!--.top-bar-->'; 
-        foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+
+        //$return .= "<pre>" . var_dump($woocommerce->cart->get_cart()) .  "</pre>";
+        //foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+        foreach ( $woocommerce->cart->get_cart() as $cart_item_key => $cart_item ) {
             if(intval($cart_item['product_id'])===$id){
                 $_product     = apply_filters( 'woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key );
                 $product_id   = apply_filters( 'woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key );
